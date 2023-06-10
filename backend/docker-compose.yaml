@@ -1,0 +1,32 @@
+version: '1'
+
+services:
+  db:
+    image: postgres:15
+    container_name: database
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - '5432:5432'
+    volumes:
+      - stc_db:/var/lib/postgresql/data
+    networks:
+      - stc_net
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "docker_app"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    deploy:
+      replicas: 1
+
+volumes:
+  stc_db:
+    name: stc_db
+
+networks:
+  stc_net:
+    name: stc_net
